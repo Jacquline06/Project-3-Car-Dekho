@@ -59,7 +59,7 @@ def main():
         bt = st.selectbox("Body Type", ["Select bodytype"] + ['Hatchback', 'SUV', 'Sedan', 'MUV', 'Minivans', 'Wagon'])
         km = st.slider("Kilo Meter", min_value=700, max_value=150000)
         trans = st.selectbox("Transmission", ["Select Transmission"] + ['Manual', 'Automatic'])
-        owners = st.selectbox("No of Owners", ["Select no.of.owner"] + [0, 1, 2, 3, 4, 5])
+        owners = st.selectbox("Owners", ["Select no.of.owner"] + [0, 1, 2, 3, 4, 5])
         brand = st.selectbox("Brand", ["Select Brand"] + ['Maruti', 'Ford', 'Tata', 'Hyundai', 'Datsun', 'Honda', 'Renault', 
                                                           'Volkswagen', 'Mahindra', 'Skoda', 'MG', 'Kia', 'Toyota', 'Nissan', 
                                                           'Fiat', 'Chevrolet', 'Citroen', 'Mini', 'Hindustan Motors'])
@@ -68,6 +68,7 @@ def main():
         insurance = st.selectbox("Insurance Validity", ["Select Insurance Validity"] + ['Third Party insurance', 
                                                                                           'Comprehensive', 'Zero Dep', 'Not Available'])
         fueltype = st.selectbox("Fuel Type", ["Select Fuel Type"] + ['Petrol', 'Diesel', 'LPG', 'CNG'])
+        seats = st.number_input("Number of seats", min_value=4, value=8)
         mileage = st.slider("Mileage", min_value=10.0, max_value=28.0)
         color = st.selectbox("Color", ["Select Color"] + ['white', 'red', 'others', 'gray', 'maroon', 'orange', 'silver', 
                                                            'blue', 'brown', 'yellow', 'black', 'gold', 'green', 'purple'])
@@ -95,7 +96,12 @@ def main():
             st.warning("Please choose a valid option in the transmission box")
 
         # Dynamic input for number of owners
-        details1.append(owners)
+        if owners != "Select no of owners":
+            # encoded_value = encoder["ownerNo"].transform([owners])[0]
+            details1.append(owners)
+        else:
+            st.warning("Please choose a valid option in the owner box")
+         
 
         # Dynamic input for brand
         if brand != "Select Brand":
@@ -105,21 +111,29 @@ def main():
             st.warning("Please choose a valid option in the brand box")
 
         # Dynamic input for model year
-        details1.append(float(model_year))
+        details1.append(model_year)
 
-        # Dynamic input for insurance
+         # Dynamic input for insurance
         if insurance != "Select Insurance Validity":
             encoded_value = encoder["Insurance Validity"].transform([insurance])[0]
             details1.append(int(encoded_value))
         else:
             st.warning("Please choose a valid option in the insurance box")
 
-        # Dynamic input for fuel type
+         # Dynamic input for fuel type
         if fueltype != "Select Fuel Type":
             encoded_value = encoder["Fuel Type"].transform([fueltype])[0]
             details1.append(int(encoded_value))
         else:
             st.warning("Please choose a valid option in the fuel type box")
+       # Dynamic input for seats
+        if seats != "Select no of seats":
+            #encoded_value = encoder["Seats"].transform([seats])[0]
+            details1.append(seats)
+        else:
+            st.warning("Please choose a valid option in the seats")
+
+       
 
         # Dynamic input for mileage
         details1.append(mileage)
@@ -127,34 +141,42 @@ def main():
         # Constant values
         max_power_mean = 83.284
         torque_mean = 127.384
+        
+        details1.append(max_power_mean)
+        details1.append(torque_mean)
+        # Dynamic input for colour
+        if color != "Select Color":
+           if "Color" in encoder:  # Check for the key in encoder
+                encoded_value = encoder["Color"].transform([color])[0]
+                details1.append(int(encoded_value))
+        else:
+            st.warning("Please choose a valid option in the color")
+        
+        No_of_Cylinder=4
+        details1.append(No_of_Cylinder)
+        Values_per_Cylinder=5
+        details1.append(Values_per_Cylinder)
+
         Length_mean = 3880.395
         Width_mean = 1690.101
         Height_mean = 1542.333
         wheelbase_mean = 2465.064
 
-        # Append constant values
-        details1.extend([
-            max_power_mean,  # 9
-            torque_mean,     # 10
-            4,               # No of Cylinder (constant)
-            1,               # Values per Cylinder (constant)
-            Length_mean,     # Length
-            Width_mean,      # Width
-            Height_mean,     # Height
-            wheelbase_mean,  # Wheel Base
-            3,               # Steering Type (constant)
-            0,               # Front Brake Type (constant)
-            0,               # Rear Brake Type (constant)
-            4,               # Tyre Type (constant)
-            1                # No Door Numbers (constant)
-        ])
-
+        details1.append(Length_mean)
+        details1.append(Width_mean)
+        details1.append(Height_mean)
+        details1.append(wheelbase_mean)
         # Dynamic input for gears
         if gears != "Select Gears":
             details1.append(gears)
         else:
             st.warning("Please choose a valid option in the gears box")
-
+        #dynamic in no of door
+        if no_door_numbers!= "Select no of doors":
+            #encoded_value = encoder["No Door Numbers"].transform([no_door_numbers])[0]
+            details1.append(no_door_numbers)
+        else:
+            st.warning("Please choose a valid option in the No Door Numbers")
         # City encoding
         if city != "Select City":
             if "City" in encoder:  # Check for the key in encoder
@@ -174,7 +196,7 @@ def main():
 
     if st.button("Predict Price"):
     # Check if the length of details1 is 24 (i.e., all inputs are gathered)
-        if len(details1) == 24:
+        if len(details1) == 22:
         # Scale the data
           values_scaled = scaler.transform(details)
         
